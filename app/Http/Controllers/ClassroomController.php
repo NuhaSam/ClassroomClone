@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classroom;
+use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redirect;
@@ -30,9 +31,9 @@ class ClassroomController extends Controller
     public function show(Request $request )
     {
         $classrooms = Classroom::all();
-        
+        $topics = Topic::all();
         // redirect(route('classrooms.show',compact('classroom')));
-        return view('classrooms.show', compact('classrooms'));
+        return view('classrooms.show', compact('classrooms', 'topics'));
     }
     public function view(Request $request ,$id)
     {

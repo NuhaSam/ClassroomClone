@@ -8,6 +8,7 @@
      <h5 class="card-title">{{  $class->name }}</h5> 
      <p class="card-title">{{  $class->subject }}</p> 
     <a href=" {{ route('classrooms.view' , $class->id); }}" class="btn btn-primary">View</a>
+    <a href=" {{ route('topic.index') }}" class="btn btn-primary">Browse Topics </a>
     <a href=" {{ route('classrooms.edit' , $class->id); }}" class="btn btn-primary">Edit</a>
     <form method="post" action="{{ route('classrooms.delete', $class->id ); }}" >
       @csrf
