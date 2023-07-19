@@ -17,13 +17,16 @@ class TopicFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'name' => fake()->name(),
+            // 'id' => id();
+            'name' => fake()->name(),
+            'classroom_id' => 1,
+            'user_id' => 1,
             // 'email' => fake()->email(),
             // 'email_verified_at' =>date('Y-m-d'),
             // 'password' => "H('n123$')",//'n123$',
             // 'remember_token' => 'null', 
-            // 'created_at' =>date('Y-m-d'),
-            // 'updated_at' =>date('Y-m-d'),
+            'created_at' =>date('Y-m-d'),
+            'updated_at' =>date('Y-m-d'),
         ];
     }
 }

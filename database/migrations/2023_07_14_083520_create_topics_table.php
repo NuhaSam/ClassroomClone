@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->timestamps(); // <-- Add this to add created_at and updated_at
+
         });
     }
 
