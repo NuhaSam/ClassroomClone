@@ -1,10 +1,14 @@
 @include('partial/header')
-
 <div class="row">
+@if($success)
+  <div class="alert alert-success">
+    {{ $success }}
+  </div>
+  @endif
+  <a>Google</a>
 @foreach($topics as $topic) 
 <div class="col-md-3">
   <div class="card">
-    <p>HHH</p>
     <img src="" class="card-img-top" alt="">
     <div class="card-body">
       <h5 class="card-title">{{ $topic->name }}</h5>

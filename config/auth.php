@@ -94,8 +94,8 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
+            'expire' => 60,  // 1 hour
+            'throttle' => 60, // 1 minute (after which the user can request new link to reset the password)
         ],
     ],
 

@@ -10,9 +10,9 @@ class TopicController extends Controller
 
     public function index()
     {
-
         $topics = Topic::get();
-        return view('topics.index', compact('topics'));
+        $success = session('success');
+        return view('topics.index', compact('topics','success'));
     }
 
     // public function view()
@@ -60,5 +60,26 @@ $topic->created_at = date('y-m-d H:i:s');
     {
         Topic::destroy($id);
         return redirect(route('topic.index'));
+    }
+
+    public function trashed(){
+        $topics = Topic::onlyTrashed()->latest()->get();
+
+        return view('topics.trashedTopics', compact('topics'));
+    }
+
+    public function restoreTopic($id){
+        $topic = Topic::onlyTrashed()->findOrFail($id);
+        $topic->restore();
+
+        return redirect(route('topic.index'))
+                ->with('success', "\" ".$topic->name ." \" Topic Restored Successfully");
+
+    }
+    public function forceDeleteTOpic($id){
+        $topic = Topic::onlyTrashed()->findOrFail($id);
+        $topic->forceDelete();
+
+        return redirect()->route('topic.index')->with('success', "\" ".$topic->name ." \" Topic Deleted Successfully");
     }
 }
