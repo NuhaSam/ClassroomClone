@@ -5,7 +5,6 @@
     {{ $success }}
   </div>
   @endif
-  <a>Google</a>
 @foreach($topics as $topic) 
 <div class="col-md-3">
   <div class="card">

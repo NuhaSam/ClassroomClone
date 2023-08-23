@@ -12,6 +12,10 @@
                 
                 <span class="text-success fs-3 "> {{ $classroom->code }}</span>
             </div>
+
+            <a href="{{route('classroom.classworks.index',$classroom->id) }}" class="">Classworks</a>
+            <a href="{{route('classrooms.people',$classroom->id) }}" class="">People</a>
+
             <h6> Invitation Link </h6>
             <p>{{ $invitation_link }}</p>
         </div>

@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Models\Topic;
 
 class TopicController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $topics = Topic::get();
+        // $request->query('classroom_id');
+        // return $request->query('classroom_id')."KK";
+        $topics = Topic::where('classroom_id', $request->query('classroom_id'))->get();
         $success = session('success');
         return view('topics.index', compact('topics','success'));
     }

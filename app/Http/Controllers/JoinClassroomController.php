@@ -36,7 +36,8 @@ class JoinClassroomController extends Controller
         $classroom = Classroom::active()->withoutGlobalScope('userClassroom')->findOrFail($id);
 
         try {
-            $this->exists($classroom->id, Auth::id());
+            $classroom->join(Auth::id(),$request->input('role'));
+        
         } catch (Exception $e) {
             return redirect(route('classrooms.view', $classroom->id));
         }
@@ -46,7 +47,7 @@ class JoinClassroomController extends Controller
         //     'role' => $request->input('role','student'),
         //     'created_at' => now(),
         // ]);
-        $classroom->join($classroom->id);
+       
         return redirect(route('classrooms.view', $classroom->id));
     }
 
@@ -55,11 +56,16 @@ class JoinClassroomController extends Controller
     //     ->where('classroom_id',$classroom_id)
     //     ->where('user_id',$user_id)->exists();
     // }
-    public function exists($classroom_id, $user_id)
+    public function exists(Classroom $classroom, $user_id)
     {
-        $exists =  DB::table('classroom_user')
-            ->where('classroom_id', $classroom_id)
-            ->where('user_id', $user_id)->exists();
+        // $exists =  DB::table('classroom_user')
+        //     ->where('classroom_id', $classroom_id)
+        //     ->where('user_id', $user_id)->exists();
+
+
+        // nested of above code , we can do it using relations. 
+        $exists = $classroom->users()->where('user_id',$user_id)->exists();
+
 
         /**
          *  Classroom::where('id', $classroom_id)

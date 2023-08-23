@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -29,8 +29,12 @@ Route::middleware('auth')->group(function () {
 });
 
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\ClassworkController;
+use App\Http\Controllers\ClassworkUserController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\JoinClassroomController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\TopicController;
 use PhpParser\Builder\Class_;
 
@@ -101,6 +105,17 @@ Route::group(
             });
     }
 );
+
+Route::resource('classroom.classworks',ClassworkController::class);
+Route::get('classrooms/{classroom}/people/',ClassworkUserController::class)->name('classrooms.people');
+Route::delete('classrooms/{classroom}/people/',[ClassworkUserController::class,'destroy'])->name('classrooms.people.destroy');
+
+Route::post('comment/',[CommentController::class,'store'])->name('comment.store');
+
+Route::post('submissions/{classwork}',[SubmissionController::class,'store'])->name('submission.store')
+;
+Route::get('submissions/{submission}/file',[SubmissionController::class,'file'])->name('submission.file');
 // Route::get('/classroom/{classroom}/join',[JoinClassroomController::class,'create'])-->name('classrooms.join');
 // Route::put('/classroom/{classroom}/join',[JoinClassroomController::class,'store'])->name('classrooms.joinStore');
 require __DIR__ . '/auth.php';
+

@@ -22,15 +22,25 @@ class User extends Authenticatable
         'email',
         'password',
     ];
-
+    public function submissions(){
+        return $this->hasMany(Submission::class);
+    }
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
     //MANY-TO-MANY
-/*
     public function classrooms()
     {
         return $this->belongsToMany(Classroom::class, 'classroom_user');
     }
-    */
+// relation between user and it's own classroom
+    public function createdClassroom(){
+        return $this->hasMany(Classroom::class,'user_id');
+    }
 
+    public function classworks(){
+        return $this->belongsToMany(Classwork::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
