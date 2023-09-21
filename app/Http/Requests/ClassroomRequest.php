@@ -24,7 +24,8 @@ class ClassroomRequest extends FormRequest
         return [
             'name' => 'required | max: 25',
             'section' => 'required | max: 225',
-            'subject' => 'nullable',    
+            'subject' => 'nullable',  
+            'cover_image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048|dimensions:min_width=100,min_height=100,max_width=1050,max_height=300',
         ];
     }
     public function messages()

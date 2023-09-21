@@ -1,4 +1,5 @@
-@include('partial.header')
+@include('partial/classroomHeader')
+@extends('partial.header')
 
 @section('content')
 <div class="container">
@@ -21,7 +22,7 @@
   <form class="row row-cols-lg-auto g-3 align-items-center" method="get" action="{{ route('classroom.classworks.index',$classroom) }}">
     <div class="col-12">
       <input type="text" name="search" class="form-control" placeholder="search">
-    <!-- </div>
+      <!-- </div>
     <div class="col-12"> -->
       <button type="submit" name="submit" class="btn btn-primary ms-2">Search</button>
     </div>
@@ -39,11 +40,17 @@
       <div id="flush-collapse{{$classwork->id}}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{$classwork->id}}" data-bs-parent="#accordionFlushExample">
         <div class="accordion-body">
           <p> {{ $classwork->description }} </p>
-
-          <a class="btn btn-sm btn-outline-success" href="{{ route('classroom.classworks.edit',[ $classroom, $classwork ]) }}">Edit</a>
-          <a class="btn btn-sm btn-outline-dark" href="{{ route('classroom.classworks.show',[ $classroom, $classwork ]) }}">Show</a>
-       
-
+          <div class="d-flex justify-content-space-around">
+            <a class="btn btn-sm btn-outline-dark" href="{{ route('classroom.classworks.show',[ $classroom, $classwork ]) }}">Show</a>
+            @can('classworks.manage',$classwork)
+            <a class="btn btn-sm btn-outline-success" href="{{ route('classroom.classworks.edit',[ $classroom, $classwork ]) }}">Edit</a>
+            <form method="post" action="{{ route('classroom.classworks.destroy',[ $classroom, $classwork ]) }}">
+              @csrf
+              @method('delete')
+              <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
+            @endcan
+          </div>
         </div>
       </div>
     </div>
@@ -53,3 +60,10 @@
     @endforelse
   </div>
   {{ $classworks->withQueryString()->links() }}
+  @endsection
+  @push('scripts')
+  <script>
+    classroomId = "{{ $classwork->classroom_id }}";
+  </script>
+  <!-- @vite(['resources/js/app.js']) -->
+  @endpush

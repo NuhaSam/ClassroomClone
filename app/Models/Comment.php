@@ -11,13 +11,16 @@ class Comment extends Model
 
     protected $fillable = ['content','ip','user_agent','user_id','commentable_type','commentable_id'];
 
-    protected $with = ['user'];
-    public function user(){
+    protected $with = ['user']; // eager load 
+
+    public function user()
+    {
         return $this->belongsTo(User::class)->withDefault(['name' => 'Deleted User']);
     }
     
 
-    public function commentable(){
+    public function commentable()
+    {
         return $this->morphTo();
     }
 }

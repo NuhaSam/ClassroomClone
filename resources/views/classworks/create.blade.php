@@ -3,11 +3,11 @@
 <div class="container">
     <h1> {{ $classroom->name }} # {{ $classroom->id}}</h1>
     <h3>Create Classwork</h3>
-    <hr> 
+    <hr>
 
     @if($error)
-<p> {{ $error }}</p>
-@endif
+    <p> {{ $error }}</p>
+    @endif
 
     <form method="post" action="{{ route('classroom.classworks.store',[$classroom->id , 'type'=> $type ])  }}">
         @csrf
@@ -17,7 +17,7 @@
                 <input type="text" class="form-control" name="title" placeholder="title">
 
                 <label for="description">Classwork Description (Optional)</label>
-                <input type="textarea" placeholder="description" class="form-control"  name="description">
+                <input type="textarea" placeholder="description" class="form-control" name="description">
 
                 <label>Topic</label>
                 <select class="form-select" aria-label="Default select example" name="topic_id" id="topic_id">
@@ -31,7 +31,7 @@
             <div class="col md-4">
                 @foreach($classroom->students as $student )
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="students[]" value="{{ $student->id }}" id="std-{{$student->id}}">
+                    <input class="form-check-input" type="checkbox" name="students[]" value="{{ $student->id }}" id="std-{{$student->id}}" checked>
                     <label class="form-check-label" for="std-{{$student->id}}">
                         {{$student->name}}
                     </label>
@@ -39,14 +39,13 @@
                 @endforeach
                 <br>
                 @if($type == 'assignment')
-                <label >Grade</label>
-                <input type="number" class="form-control" placeholder="grade" name="grade" >
+                <label>Grade</label>
+                <input type="number" class="form-control" placeholder="grade" name="grade">
                 <label>Due</label>
                 <input type="date" class="form-control" name="due">
                 @endif
             </div>
 
-            
         </div>
 
 

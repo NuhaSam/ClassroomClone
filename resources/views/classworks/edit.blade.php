@@ -40,9 +40,9 @@
                 <br>
                 @if($type == 'assignment')
                 <label >Grade</label>
-                <input type="number" class="form-control" name="grade" value="{{ $classwork->options['grade'] }}" placeholder="grade" >
+                <input type="number" class="form-control" name="grade" value="{{ $classwork->options['grade'] ?? ''}}" placeholder="grade" >
                 <label>Due</label>
-                <input type="date" class="form-control" name="due" value="{{ $classwork->options['due'] }}" >
+                <input type="date" class="form-control" name="due" value="{{ $classwork->options['due'] ?? '' }}" >
                 @endif
             </div>
         </div>

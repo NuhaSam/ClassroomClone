@@ -3,16 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classroom;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClassworkUserController extends Controller
 {
-    public function __invoke(Classroom $classroom)
+    public function __invoke(User $user, Classroom $classroom)
     {
-        // $classroom->users()->get()->groupBy('role');
+        $peoples = $classroom->users()->orderBy('name', 'DESC')->get()->groupBy('pivot.role');
+        $peopleCount = $classroom->users()->wherePivot('role','Student')->count();
+
+        // $user = Auth::user();
+        $owner = $user->classrooms()->withoutGlobalScopes()->where('classroom_user.user_id',Auth::id())->exists();
+        // dd($owner);
         return view('classrooms.people', [
-            'people' => $classroom->users()->orderBy('name', 'DESC')->get()->groupBy('pivot.role'),
-            'classroom' => $classroom
+            'people' => $peoples,
+            'classroom' => $classroom,
+            'count' => $peopleCount,
+            'owner' => $owner,
         ]);
     }
     public function destroy(Request $request, Classroom $classroom)

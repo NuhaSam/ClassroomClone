@@ -7,15 +7,22 @@ use App\Models\Classroom;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 
 class ClassroomController extends Controller
 {
     //
+    public function index($lang){
+
+        Session::put('lang', $lang);
+        
+        return redirect()->back();
+    }
     public function create()
     {
        return view('classrooms.create');
@@ -30,27 +37,34 @@ class ClassroomController extends Controller
         // ],[
         //     'required' => ":attribute can't be empty"
         // ]);
+        $path ="";
+        if($request->hasFile('cover_image')){
+            $file = $request->file('cover_image');
+            $path = Classroom::uploadCoverImage($file);
+        }
+        // dd($path);
 
         $validated = $request->validated();
-        $data = $request->all();
+        // $data = $request->all();
+        $validated['cover_image']= $path;
         $validated['code'] = Str::random(5);
         $validated['user_id'] =Auth::id();
         $classroom =  new Classroom( $validated);
-        DB::beginTransaction();
-        try{
+        // DB::beginTransaction();
+        // try{
         $classroom->save();
-        $classroom->join($classroom->id,'Teacher');
+        $classroom->join(Auth::id(),'teacher');
 
-        DB::commit();
-        }catch(Exception $e){
-            DB::rollBack();
-            return back()->withInput()->with('error',$e->getMessage());
-        }
+        // DB::commit();
+        // }catch(Exception $e){
+        //     DB::rollBack();
+        //     return redirect(route('classrooms.people'))->with('error',$e->getMessage());
+        // }
        return redirect(route('classrooms.show'));
     }
     public function show(Request $request )
     {
-        $classrooms = Classroom::active()->get();
+        $classrooms = Classroom::active()->paginate(6);
         $topics = Topic::all();
         $success = session('success');
         // redirect(route('classrooms.show',compact('classroom')));
@@ -103,6 +117,27 @@ class ClassroomController extends Controller
         $classroom->forceDelete();
         // Classroom::deleteCoverImage($classroom->cover_image);
         return redirect( route('classrooms.show') )->with('success',"\" {$classroom->name} \" Classroom Deleted Successfully");
+    }
+
+    // public function classroomNotifications()
+    // {
+    //     $user = Auth::user();
+    //     $notifications = $user->unreadNotifications();
+    //     $count =  $user->unreadNotifications()->count();
+
+    //         return view('classrooms.notifications');
+    // }
+    public function getNotifications(Classroom $classroom)
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications()->take(10)->get();
+        $count =  $user->unreadNotifications()->count();
+// dd($notifications);
+        return view('classrooms.notifications', compact('count', 'notifications','classroom'));
+
+    }
+    public function chat(Classroom $classroom){
+        return view('classrooms.chat',compact('classroom'));
     }
 }
 

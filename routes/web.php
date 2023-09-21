@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminTwoFactorAuthenticationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth:admin', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,10 +43,11 @@ use PhpParser\Builder\Class_;
 // use Illuminate\Support\Facades\Route;
 
 
-Route::get('/classroom/create', [ClassroomController::class, 'create'])->middleware('auth');
+Route::get('/classroom/{index}', [ClassroomController::class, 'index'])->middleware('auth')->name('classroom.index');
+Route::get('/classroom/create', [ClassroomController::class, 'create'])->middleware('auth')->name('classroom.create');
 Route::post('/classroom/add', [ClassroomController::class, 'add'])->name('classroom.add');
 
-Route::get('/', [ClassroomController::class, 'show'])->name('classrooms.show')->middleware('auth');
+Route::get('/', [ClassroomController::class, 'show'])->name('classrooms.show')->middleware('auth:web,admin');
 Route::get('/classroom/view/{id}', [ClassroomController::class, 'view'])->name('classrooms.view');
 Route::get('/classroom/edit/{id}', [ClassroomController::class, 'edit'])->name('classrooms.edit');
 Route::put('/classroom/update/{id}', [ClassroomController::class, 'update'])->name('classrooms.update');
@@ -62,19 +64,19 @@ Route::put('topic/update/{id}', [TopicController::class, 'update'])->name('topic
 
 Route::delete('/topic/delete/{id}', [TopicController::class, 'delete'])->name('topic.delete');
 
-route::get('login', [LoginController::class, 'login'])->name('login');
-route::post('login', [LoginController::class, 'login'])->name('login');
+// route::get('login', [LoginController::class, 'create'])->name('login');
+// route::post('login', [LoginController::class, 'store'])->name('login');
 // Route::resource('/tpoic',TopicController::class);
 
-
+Route::get('/admin/2fa',[AdminTwoFactorAuthenticationController::class,'index']);
 Route::group([
-    'middleware' => ['auth'],
-], function () {
+    'middleware' => ['auth:web,admin'],
+], function () {        
     Route::prefix('/classroom/trashed/')
         ->as('classroom.')
         ->controller(ClassroomController::class)
         ->group(function () {
-            Route::get('/', 'trashed')->name('trashed');
+            Route::get('/t', 'trashed')->name('trashed');
             Route::put('/{id}', 'restore')->name('restore');
             Route::delete('/{id}', 'forceDelete')->name('forceDelete');
         });
@@ -109,7 +111,9 @@ Route::group(
 Route::resource('classroom.classworks',ClassworkController::class);
 Route::get('classrooms/{classroom}/people/',ClassworkUserController::class)->name('classrooms.people');
 Route::delete('classrooms/{classroom}/people/',[ClassworkUserController::class,'destroy'])->name('classrooms.people.destroy');
+Route::get('classrooms/{classroom}/chat',[ClassroomController::class,'chat'])->name('classrooms.chat');
 
+Route::get('classrooms/{classroom}/notifications',[ClassroomController::class,'getNotifications'])->name('classroom.notifications');
 Route::post('comment/',[CommentController::class,'store'])->name('comment.store');
 
 Route::post('submissions/{classwork}',[SubmissionController::class,'store'])->name('submission.store')
@@ -117,5 +121,5 @@ Route::post('submissions/{classwork}',[SubmissionController::class,'store'])->na
 Route::get('submissions/{submission}/file',[SubmissionController::class,'file'])->name('submission.file');
 // Route::get('/classroom/{classroom}/join',[JoinClassroomController::class,'create'])-->name('classrooms.join');
 // Route::put('/classroom/{classroom}/join',[JoinClassroomController::class,'store'])->name('classrooms.joinStore');
-require __DIR__ . '/auth.php';
+// require __DIR__ . '/auth.php';
 

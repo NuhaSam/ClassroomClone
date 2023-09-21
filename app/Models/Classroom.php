@@ -14,7 +14,7 @@ class Classroom extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'subject', 'section', 'room', 'code', 'status', 'user_id'];
+    protected $fillable = ['name', 'subject', 'section', 'room', 'code', 'status', 'user_id', 'cover_image',];
     //MANU-TO-MANY
     /**
      *   public function users()
@@ -24,11 +24,22 @@ class Classroom extends Model
      */
 
 
+    //  protected $appends =[
+    //     'cover_image_url' //// Accessor;
+    //  ];
+
+    protected $hidden = [
+        'room',
+    ];
     protected static function booted()
     {
         static::addGlobalScope('userClassroom', function (Builder $builder) {
             $builder->where('user_id', Auth::id())
                 ->orWhereRaw('id in (SELECT classroom_id FROM classroom_user WHERE user_id = ?)', [Auth::id()]);
+        });
+
+        static::deleting(function (Classroom $classroom) {
+            $classroom->status = 'deleted';
         });
     }
     public  function classworks()
@@ -39,10 +50,14 @@ class Classroom extends Model
     {
         return $this->hasMany(Topic::class, 'classroom_id', 'id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function users()
     {
-       return $this->belongsToMany(User::class, 'classroom_user', 'classroom_id', 'user_id', 'id', 'id')
-       ->withPivot(['role','created_at']);
+        return $this->belongsToMany(User::class, 'classroom_user', 'classroom_id', 'user_id', 'id', 'id')
+            ->withPivot(['role', 'created_at']);
     }
     public function teachers()
     {
@@ -53,6 +68,14 @@ class Classroom extends Model
         return $this->users()->wherePivot('role', 'student');
     }
 
+    public function receivedMessage()
+    {
+        return $this->morphMany(Message::class, 'recipient');
+    }
+    public function sentMessage()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
     public function scopeActive(Builder $builder)
     {
         $builder->where('status', 'active');
@@ -72,15 +95,26 @@ class Classroom extends Model
         // ]);
 
         // nested of the code above ,  we can do it with relations
-        $exists = $this->users()->where('user_id',$user_id)->exists();
+        $exists = $this->users()->where('user_id', $user_id)->exists();
 
         if ($exists) {
             throw new Exception('The User already exists');
         }
 
-        return $this->users()->attach($user_id ,[
+        return $this->users()->attach($user_id, [
             'role' => $role,
             'created_at' => now(),
         ]);
+    }
+
+    public static function uploadCoverImage($file)
+    {
+        $path =  $file->store(
+            '/covers',
+            [
+                'disk' => 'public',
+            ]
+        );
+        return $path;
     }
 }

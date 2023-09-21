@@ -43,7 +43,7 @@ class Classwork extends Model
     {
         return $this->hasMany(Submission::class);
     }
-        public function comments()
+    public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
@@ -57,6 +57,9 @@ class Classwork extends Model
         return $this->belongsTo(Topic::class, 'classwork_id', 'id');
     }
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
     public function users()
     {
         return $this->belongsToMany(User::class, 'classwork_user', 'classwork_id', 'user_id', 'id', 'id')
@@ -64,8 +67,6 @@ class Classwork extends Model
             ->using(ClassworkUser::class); // Model for Pivot Table
     }
     public function scopeFilter(Builder $builder,$filters){
-
-
         // return $filters['search']; 
         $builder->when($filters['search'] ?? '' , function ($builder, $value){
             $builder->where(function($builder) use ($value) {

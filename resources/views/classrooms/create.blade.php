@@ -6,9 +6,16 @@
     @foreach($errors->all() as $error)
     <p>{{ $error }}</p>
     @endforeach
+
+    @if($errors->any())
+                    @foreach($errors->all() as $error)
+                    <p> {{ $error }}</p>
+                    @endforeach
+                    @endif
+                    
     </div>
     @endif
-    <form action=" {{ route('classroom.add') }}" method="post" style="width: 70%;  margin-left:7% ">
+    <form action=" {{ route('classroom.add') }}" method="post" style="width: 70%;  margin-left:7% " enctype="multipart/form-data">
     {{ csrf_field() }}
         <div class="form-floating mb-3">
             <input type="text" class="form-control" value="{{ old('name') }}" name="name" id="name" placeholder="classroom name">
@@ -20,11 +27,11 @@
             <label for="subject">Subject</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="section" id="section" placeholder="section">
+            <input type="text" class="form-control" value="{{ old('section') }}" name="section" id="section" placeholder="section">
             <label for="section">Section</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="room" id="room" placeholder="room">
+            <input type="text" class="form-control" value="{{ old('room') }}" name="room" id="room" placeholder="room">
             <label for="room">Room</label>
         </div>
         <div class="form-floating mb-3">

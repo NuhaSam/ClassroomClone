@@ -27,6 +27,15 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::define('classworks.view', function (User $user, Classwork $classwork) {
+            $teacher = $user->classrooms()
+            ->withoutGlobalScopes()->wherePivot('classroom_id', $classwork->classroom_id)
+                ->wherePivot('role', 'teacher')->exists();
+
+            $assigned = $user->classworks()->wherePivot('classwork_id', $classwork->id)->exists();
+
+            return ($teacher || $assigned);
+        });
         Gate::define('classworks.create', function (User $user, Classroom $classroom) {
             return $user->classrooms()
                 ->withoutGlobalScopes()
@@ -36,7 +45,7 @@ class AuthServiceProvider extends ServiceProvider
         });
         Gate::define('submissions.create', function (User $user, Classwork $classwork) {
             $teacher =  $user->classrooms()
-            ->withoutGlobalScopes()
+                ->withoutGlobalScopes()
                 ->wherePivot('classroom_id', $classwork->classroom_id)
                 ->wherePivot('role', 'teacher')
                 ->exists();
@@ -45,5 +54,13 @@ class AuthServiceProvider extends ServiceProvider
             }
             return $user->classworks()->wherePivot('classwork_id', $classwork->id)->exists();
         });
+
+        Gate::define('people.delete', function(User $user, $classroom) {
+            return $user->classrooms()->withoutGlobalScopes()->wherePivot('classroom_id', $classroom->id)->wherePivot('role','teacher')->exists();
+        });
+        Gate::define('classworks.manage', function(User $user, $classwork) {
+            return $user->classrooms()->withoutGlobalScopes()->wherePivot('classroom_id', $classwork->classroom_id)->wherePivot('role','teacher')->exists();
+        });
+
     }
 }

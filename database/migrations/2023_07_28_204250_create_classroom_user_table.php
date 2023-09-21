@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('classroom_user', function (Blueprint $table) {
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->enum('role',['Student','teacher']);
+            $table->enum('role',['Student','Teacher']);
             $table->timestamp('created_at');
 
             $table->primary(['classroom_id','user_id']);

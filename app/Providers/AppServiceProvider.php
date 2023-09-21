@@ -6,6 +6,7 @@ use App\Models\Classroom;
 use App\Models\Classwork;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -29,11 +30,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
     
-
+    // ResourceCollection::withoutWrapping();p-
     Paginator::useBootstrapFive();
     Relation::enforceMorphMap([
         'Classwork' => Classwork::class,
         'Post' => Post::class,
+        'User' => User::class,
+        'Classroom' => Classroom::class,
     ]);
     }
 }
